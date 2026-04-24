@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baja de Usuario — Respuesta Requerida</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --navy: #0d2952;
+    --blue: #1b4fa8;
+    --blue-light: #eff6ff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-900: #0f172a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar { height: 4px; background: var(--gray-200); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #3b82f6); width: 0%; transition: width .4s ease; border-radius: 2px; }
+
+  /* TOP NAV */
+  .topnav { background: var(--navy); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 4px; z-index: 99; }
+  .topnav-brand { display: flex; align-items: center; gap: 10px; }
+  .topnav-logo { width: 32px; height: 32px; background: rgba(255,255,255,.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .topnav-logo svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; }
+  .topnav-name { font-size: 14px; font-weight: 700; color: #fff; }
+  .topnav-sub { font-size: 11px; color: rgba(255,255,255,.5); }
+  .topnav-steps { display: flex; gap: 6px; }
+  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.25); transition: all .3s; }
+  .step-dot.active { background: #fff; transform: scale(1.3); }
+  .step-dot.done { background: #4ade80; }
+
+  /* MAIN */
+  .main { max-width: 620px; margin: 0 auto; padding: 32px 16px 60px; }
+
+  /* USER CARD */
+  .user-card { background: #fff; border-radius: 16px; border: 1px solid var(--gray-200); padding: 20px; margin-bottom: 28px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .user-avatar { width: 48px; height: 48px; border-radius: 12px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: var(--blue); flex-shrink: 0; }
+  .user-name { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+  .user-meta { display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+  .user-tag { font-size: 12px; color: var(--gray-600); background: var(--gray-100); padding: 2px 9px; border-radius: 20px; }
+  .user-tag.danger { background: #fef2f2; color: #b91c1c; font-weight: 600; }
+
+  /* STEP PANELS */
+  .step-panel { display: none; animation: fadeIn .3s ease; }
+  .step-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-header { margin-bottom: 20px; }
+  .step-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .step-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; padding: 3px 10px; border-radius: 20px; }
+  .step-badge.b1 { background: var(--blue-light); color: var(--blue); }
+  .step-badge.b2 { background: var(--green-light); color: var(--green); }
+  .step-badge.b3 { background: var(--amber-light); color: var(--amber); }
+  .step-num { font-size: 12px; color: var(--gray-400); font-weight: 600; }
+  .step-title { font-size: 22px; font-weight: 800; color: var(--gray-900); line-height: 1.2; }
+  .step-desc { font-size: 14px; color: var(--gray-600); margin-top: 6px; line-height: 1.6; }
+
+  /* OPTION CARDS */
+  .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+
+  .option-btn {
+    background: #fff;
+    border: 2px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s ease;
+    position: relative;
+    width: 100%;
+    font-family: inherit;
+  }
+  .option-btn:hover { border-color: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(27,79,168,.1); }
+  .option-btn.selected { border-color: var(--blue); background: var(--blue-light); }
+  .option-btn.selected.green { border-color: var(--green); background: var(--green-light); }
+  .option-btn.selected.amber { border-color: var(--amber); background: var(--amber-light); }
+  .option-btn.selected.red { border-color: var(--red); background: var(--red-light); }
+
+  .opt-check { position: absolute; top: 14px; right: 16px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--gray-200); display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0; }
+  .option-btn.selected .opt-check { background: var(--blue); border-color: var(--blue); }
+  .option-btn.selected.green .opt-check { background: var(--green); border-color: var(--green); }
+  .option-btn.selected.amber .opt-check { background: var(--amber); border-color: var(--amber); }
+  .option-btn.selected.red .opt-check { background: var(--red); border-color: var(--red); }
+  .opt-check svg { display: none; }
+  .option-btn.selected .opt-check svg { display: block; }
+
+  .opt-icon { font-size: 22px; margin-bottom: 8px; }
+  .opt-title { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .opt-text { font-size: 13px; color: var(--gray-600); line-height: 1.55; padding-right: 30px; }
+
+  /* TEXT INPUT */
+  .text-input-wrapper { margin-top: 20px; }
+  .text-input-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; display: block; }
+  .text-input { width: 100%; background: #fff; border: 2px solid var(--gray-200); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: var(--gray-900); font-family: inherit; resize: vertical; min-height: 90px; outline: none; transition: border-color .2s; line-height: 1.6; }
+  .text-input:focus { border-color: var(--blue); }
+  .text-input::placeholder { color: var(--gray-400); }
+
+  /* DESIGNEE INPUT */
+  .designee-input { display: none; margin-top: 12px; animation: fadeIn .2s ease; }
+  .designee-input.show { display: block; }
+  .designee-field { width: 100%; background: #fff; border: 2px solid var(--gray-200); border-radius: 10px; padding: 11px 14px; font-size: 13px; color: var(--gray-900); font-family: inherit; outline: none; transition: border-color .2s; }
+  .designee-field:focus { border-color: var(--blue); }
+
+  /* NAV BUTTONS */
+  .nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; gap: 12px; }
+  .btn-back { background: transparent; border: 2px solid var(--gray-200); border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 600; color: var(--gray-600); cursor: pointer; font-family: inherit; transition: all .2s; }
+  .btn-back:hover { border-color: var(--gray-400); color: var(--gray-900); }
+  .btn-next { background: var(--blue); color: #fff; border: none; border-radius: 10px; padding: 12px 28px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .2s; display: flex; align-items: center; gap: 8px; }
+  .btn-next:hover { background: #1540891; filter: brightness(1.1); }
+  .btn-next:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+  .btn-send { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; border: none; border-radius: 10px; padding: 14px 28px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .2s; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(22,163,74,.3); }
+  .btn-send:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(22,163,74,.35); }
+
+  /* SUMMARY STEP */
+  .summary-card { background: #fff; border-radius: 14px; border: 1px solid var(--gray-200); overflow: hidden; margin-top: 20px; }
+  .summary-row { display: flex; gap: 12px; align-items: flex-start; padding: 16px 20px; border-bottom: 1px solid var(--gray-100); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-num { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .summary-num.n1 { background: var(--blue-light); color: var(--blue); }
+  .summary-num.n2 { background: var(--green-light); color: var(--green); }
+  .summary-num.n3 { background: var(--amber-light); color: var(--amber); }
+  .summary-label { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+  .summary-value { font-size: 14px; color: var(--gray-900); font-weight: 600; margin-top: 3px; }
+  .summary-detail { font-size: 13px; color: var(--gray-600); margin-top: 2px; }
+
+  .send-note { font-size: 13px; color: var(--gray-600); text-align: center; margin-top: 16px; line-height: 1.6; background: var(--blue-light); padding: 12px 16px; border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="topnav">
+  <div class="topnav-brand">
+    <div class="topnav-logo">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    </div>
+    <div>
+      <div class="topnav-name">Sistemas Administrativos | TI</div>
+      <div class="topnav-sub">Formulario de baja de usuario</div>
+    </div>
+  </div>
+  <div class="topnav-steps" id="stepDots">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- USER CARD -->
+  <div class="user-card">
+    <div class="user-avatar" id="avatarInitials">JH</div>
+    <div>
+      <div class="user-name" id="cardNombre">Leslie Jacqueline Hernandez Pérez</div>
+      <div class="user-meta">
+        <span class="user-tag" id="cardCuenta">jperez@vlh.mx</span>
+        <span class="user-tag danger" id="cardFecha">Baja: 15 abr 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: RESPALDO -->
+  <div class="step-panel active" id="step0">
+    <div class="step-header">
+      <div class="step-eyebrow">
+        <span class="step-badge b1">Paso 1 de 3</span>
+      </div>
+      <div class="step-title">Respaldo de información</div>
+      <div class="step-desc">¿Deseas que TI realice un respaldo de los correos electrónicos y archivos del usuario antes de proceder?</div>
+    </div>
+    <div class="options-grid">
+      <button class="option-btn green" onclick="selectOption(0, 'respaldo', 'Sí, realizar respaldo', this)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">💾</div>
+        <div class="opt-title">Sí, realizar respaldo</div>
+        <div class="opt-text">Generar copia de seguridad de correos y archivos antes de cualquier acción.</div>
+      </button>
+      <button class="option-btn red" onclick="selectOption(0, 'respaldo', 'No es necesario', this)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">🗑️</div>
+        <div class="opt-title">No es necesario</div>
+        <div class="opt-text">No se requiere respaldo. Proceder directamente con las siguientes acciones.</div>
+      </button>
+    </div>
+    <div class="nav-buttons">
+      <div></div>
+      <button class="btn-next" id="next0" onclick="nextStep()" disabled>
+        Siguiente <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: CUENTA -->
+  <div class="step-panel" id="step1">
+    <div class="step-header">
+      <div class="step-eyebrow">
+        <span class="step-badge b2">Paso 2 de 3</span>
+      </div>
+      <div class="step-title">Gestión de la cuenta de correo</div>
+      <div class="step-desc">Indica qué acción debe realizar TI con la cuenta de correo del usuario dado de baja.</div>
+    </div>
+    <div class="options-grid">
+      <button class="option-btn" onclick="selectOption(1, 'cuenta', 'Buzón compartido', this); showDesignee(true)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">📬</div>
+        <div class="opt-title">Opción A — Buzón compartido</div>
+        <div class="opt-text">Vincular la cuenta a otro colaborador para seguimiento de mensajes.</div>
+      </button>
+      <div class="designee-input" id="designeeInput">
+        <input type="text" class="designee-field" id="designeeField" placeholder="Nombre o correo del colaborador designado" oninput="updateDesignee()">
+      </div>
+      <button class="option-btn red" onclick="selectOption(1, 'cuenta', 'Eliminación definitiva', this); showDesignee(false)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">❌</div>
+        <div class="opt-title">Opción B — Eliminación definitiva</div>
+        <div class="opt-text">Eliminar la cuenta y liberar los recursos del sistema.</div>
+      </button>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep()">← Atrás</button>
+      <button class="btn-next" id="next1" onclick="nextStep()" disabled>
+        Siguiente <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3: EQUIPO -->
+  <div class="step-panel" id="step2">
+    <div class="step-header">
+      <div class="step-eyebrow">
+        <span class="step-badge b3">Paso 3 de 3</span>
+      </div>
+      <div class="step-title">Disposición del equipo</div>
+      <div class="step-desc">Indica qué debe hacer TI con el equipo físico asignado al usuario.</div>
+    </div>
+    <div class="options-grid">
+      <button class="option-btn" onclick="selectOption(2, 'equipo', 'Reasignar a otro colaborador', this); toggleEquipoDetail(false)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">🔄</div>
+        <div class="opt-title">Reasignar a otro colaborador</div>
+        <div class="opt-text">El equipo se asignará a un nuevo usuario según se indique.</div>
+      </button>
+      <button class="option-btn red" onclick="selectOption(2, 'equipo', 'Formatear el equipo', this); toggleEquipoDetail(false)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">🖥️</div>
+        <div class="opt-title">Formatear el equipo</div>
+        <div class="opt-text">Eliminar toda la información del dispositivo y prepararlo para nueva asignación.</div>
+      </button>
+      <button class="option-btn amber" onclick="selectOption(2, 'equipo', 'Otra acción', this); toggleEquipoDetail(true)">
+        <div class="opt-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="opt-icon">✏️</div>
+        <div class="opt-title">Otra acción específica</div>
+        <div class="opt-text">Especificar instrucción particular para este equipo.</div>
+      </button>
+    </div>
+    <div class="text-input-wrapper" id="equipoDetail" style="display:none">
+      <label class="text-input-label">Describe la acción requerida:</label>
+      <textarea class="text-input" id="equipoDetailText" placeholder="Ej: Resguardar el equipo en almacén hasta nuevo aviso…" oninput="checkStep2()"></textarea>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep()">← Atrás</button>
+      <button class="btn-next" id="next2" onclick="nextStep()" disabled>
+        Revisar respuestas <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 4: RESUMEN -->
+  <div class="step-panel" id="step3">
+    <div class="step-header">
+      <div class="step-eyebrow">
+        <span class="step-badge b2">Listo para enviar</span>
+      </div>
+      <div class="step-title">Resumen de tus respuestas</div>
+      <div class="step-desc">Revisa las decisiones seleccionadas. Al confirmar se abrirá Outlook con el correo pre-llenado.</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-row">
+        <div class="summary-num n1">1</div>
+        <div>
+          <div class="summary-label">Respaldo de información</div>
+          <div class="summary-value" id="sum-respaldo">—</div>
+        </div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-num n2">2</div>
+        <div>
+          <div class="summary-label">Gestión de la cuenta</div>
+          <div class="summary-value" id="sum-cuenta">—</div>
+          <div class="summary-detail" id="sum-designee"></div>
+        </div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-num n3">3</div>
+        <div>
+          <div class="summary-label">Disposición del equipo</div>
+          <div class="summary-value" id="sum-equipo">—</div>
+          <div class="summary-detail" id="sum-equipo-detail"></div>
+        </div>
+      </div>
+    </div>
+    <div class="send-note">
+      Al hacer clic en <strong>Confirmar y enviar</strong> se abrirá Outlook con el correo de respuesta ya redactado para que solo necesites presionar Enviar.
+    </div>
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep()">← Editar</button>
+      <button class="btn-send" onclick="sendOutlook()">
+        Confirmar y enviar
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9l14 0M9 2l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 0;
+  const totalSteps = 4;
+  const answers = { respaldo: '', cuenta: '', equipo: '', designee: '', equipoDetail: '' };
+
+  const params = new URLSearchParams(window.location.search);
+  const nombre = params.get('nombre') || 'Usuario';
+  const cuenta = params.get('cuenta') || '';
+  const fechaRaw = params.get('fecha') || '';
+  const remitente = params.get('remitente') || 'TI';
+
+  function formatDate(s) {
+    if (!s) return '';
+    const [y, m, d] = s.split('-');
+    const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return `${parseInt(d)} ${months[parseInt(m)-1]} ${y}`;
+  }
+
+  function getInitials(n) {
+    return n.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
+
+  document.getElementById('cardNombre').textContent = nombre;
+  document.getElementById('cardCuenta').textContent = cuenta;
+  document.getElementById('cardFecha').textContent = 'Baja: ' + (fechaRaw ? formatDate(fechaRaw) : '');
+  document.getElementById('avatarInitials').textContent = getInitials(nombre);
+
+  function updateProgress() {
+    const pct = (currentStep / (totalSteps - 1)) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    for (let i = 0; i < totalSteps; i++) {
+      const dot = document.getElementById('dot' + i);
+      dot.className = 'step-dot';
+      if (i < currentStep) dot.classList.add('done');
+      else if (i === currentStep) dot.classList.add('active');
+    }
+  }
+
+  function selectOption(step, key, value, btn) {
+    const panel = document.getElementById('step' + step);
+    panel.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[key] = value;
+    const nextBtn = document.getElementById('next' + step);
+    if (nextBtn) nextBtn.disabled = false;
+  }
+
+  function showDesignee(show) {
+    const el = document.getElementById('designeeInput');
+    el.className = 'designee-input' + (show ? ' show' : '');
+    if (!show) { answers.designee = ''; document.getElementById('designeeField').value = ''; }
+  }
+
+  function updateDesignee() {
+    answers.designee = document.getElementById('designeeField').value;
+  }
+
+  function toggleEquipoDetail(show) {
+    const el = document.getElementById('equipoDetail');
+    el.style.display = show ? 'block' : 'none';
+    if (!show) { answers.equipoDetail = ''; }
+    checkStep2();
+  }
+
+  function checkStep2() {
+    const isOther = answers.equipo === 'Otra acción';
+    const detail = document.getElementById('equipoDetailText').value.trim();
+    answers.equipoDetail = detail;
+    const ok = answers.equipo && (!isOther || detail.length > 0);
+    document.getElementById('next2').disabled = !ok;
+  }
+
+  function nextStep() {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep++;
+    if (currentStep === 3) buildSummary();
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function prevStep() {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep--;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function buildSummary() {
+    document.getElementById('sum-respaldo').textContent = answers.respaldo;
+    document.getElementById('sum-cuenta').textContent = answers.cuenta;
+    document.getElementById('sum-designee').textContent = answers.designee ? 'Designado: ' + answers.designee : '';
+    document.getElementById('sum-equipo').textContent = answers.equipo;
+    document.getElementById('sum-equipo-detail').textContent = answers.equipoDetail || '';
+  }
+
+  function formatDateLong(s) {
+    if (!s) return '';
+    const [y, m, d] = s.split('-');
+    const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    return `${parseInt(d)} de ${months[parseInt(m)-1]} de ${y}`;
+  }
+
+  function sendOutlook() {
+    const designeeText = answers.designee ? ` -- Designado: ${answers.designee}` : '';
+    const equipoDetailText = answers.equipoDetail ? `\r\n   Detalle adicional: ${answers.equipoDetail}` : '';
+
+    const to = 'soporte@administrategia.com';
+    const subject = encodeURIComponent(`RE: Baja de Usuario - ${nombre} (${cuenta})`);
+
+    const body = encodeURIComponent(
+`Buen dia equipo de Sistemas Administrativos | TI,
+
+Reciban un cordial saludo. He revisado el aviso de baja correspondiente al usuario indicado y a continuacion les comparto mis indicaciones para que puedan proceder sin contratiempos.
+
+Datos del usuario dado de baja:
+  Nombre   : ${nombre}
+  Cuenta   : ${cuenta}
+  Fecha    : ${formatDateLong(fechaRaw)}
+
+----------------------------------------------------------
+MIS RESPUESTAS
+----------------------------------------------------------
+
+[1] Respaldo de informacion:
+    ${answers.respaldo}
+
+[2] Gestion de la cuenta de correo:
+    ${answers.cuenta}${designeeText}
+
+[3] Disposicion del equipo asignado:
+    ${answers.equipo}${equipoDetailText}
+
+----------------------------------------------------------
+
+Con estas indicaciones podran avanzar con el proceso. Si tienen alguna duda puntual o necesitan confirmacion adicional de mi parte, no duden en escribirme directamente, con gusto les atiendo.
+
+Gracias por su gestion y apoyo.
+
+Saludos cordiales`
+    );
+
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
